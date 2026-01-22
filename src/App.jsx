@@ -4,51 +4,61 @@ import LocationDetails from './components/LocationDetails/LocationDetails';
 import DataTable from './components/DataTable/DataTable';
 import './App.css';
 
-const App = () => {
-  const [data, setData] = useState(Array(30).fill({}));
-  const [tableHeight, setTableHeight] = useState('600px');
-  const tableContainerRef = useRef(null);
+function App() {
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [tableHeight, setTableHeight] = useState(0);
+  const appRef = useRef(null);
+
+  const handleSubmit = () => {
+    setIsSubmitted(true);
+  };
 
   useEffect(() => {
-    const calculateHeight = () => {
-      if (tableContainerRef.current) {
-        const topOffset = tableContainerRef.current.offsetTop;
-        const viewportHeight = window.innerHeight;
-        const remainingHeight = viewportHeight - topOffset - 40; // 40px for padding/margin
-        setTableHeight(`${remainingHeight}px`);
+    const updateTableHeight = () => {
+      if (isSubmitted && appRef.current) {
+        const header = appRef.current.querySelector('.header');
+        const locationDetails = appRef.current.querySelector('.location-details');
+        const title = appRef.current.querySelector('.title-style');
+
+        const headerHeight = header?.offsetHeight || 0;
+        const locationDetailsHeight = locationDetails?.offsetHeight || 0;
+        const titleHeight = title?.offsetHeight || 0;
+        
+        const mainContentPaddingTop = 20;
+        const wrapperMarginTop = 20;
+        const appPadding = 32; // 1rem * 2 (top and bottom)
+
+        const totalUsedSpace = headerHeight + locationDetailsHeight + titleHeight + mainContentPaddingTop + wrapperMarginTop + appPadding;
+
+        const availableHeight = window.innerHeight - totalUsedSpace;
+
+        setTableHeight(availableHeight > 200 ? availableHeight : 200); // Minimum height
       }
     };
 
-    calculateHeight();
-    window.addEventListener('resize', calculateHeight);
+    const timer = setTimeout(updateTableHeight, 50);
+    window.addEventListener('resize', updateTableHeight);
 
     return () => {
-      window.removeEventListener('resize', calculateHeight);
+      clearTimeout(timer);
+      window.removeEventListener('resize', updateTableHeight);
     };
-  }, [data]);
-
-  const handleDataChange = (index, newRowData) => {
-    const newData = [...data];
-    newData[index] = newRowData;
-    setData(newData);
-  };
+  }, [isSubmitted]);
 
   return (
-    <div className="app-container">
+    <div className="App" ref={appRef}>
       <Header />
-      <LocationDetails />
-
-      <div className="title-style">Personal Entry</div>
-
-      <div
-        ref={tableContainerRef}
-        className="data-table-container"
-        style={{ maxHeight: tableHeight }}
-      >
-        <DataTable data={data} onDataChange={handleDataChange} />
+      <div className="main-content">
+        <LocationDetails onSubmit={handleSubmit} isSubmitted={isSubmitted} />
+        {isSubmitted && (
+          <div className="data-table-wrapper">
+            <h2 className="title-style">Personal Enumeration</h2>
+            <DataTable height={tableHeight} />
+          </div>
+        )}
       </div>
     </div>
   );
-};
+}
 
 export default App;

@@ -32,35 +32,37 @@ const columns = [
   { title: 'Column 28', type: 'text', hint: '' },
 ];
 
-const DataTable = () => {
+const DataTable = ({ height }) => {
   return (
-    <table className="data-table">
-      <thead>
-        <tr>
-          {columns.map((col, index) => (
-            <th key={index}>{col.title}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {[...Array(10)].map((_, rowIndex) => (
-          <tr key={rowIndex}>
-            {columns.map((col, colIndex) => (
-              <td key={colIndex}>
-                {col.title === 'Line No' ? (
-                  <div className="line-no">{rowIndex + 1}</div>
-                ) : (
-                  <div className="input-container">
-                    <input type={col.type} />
-                    {col.hint && <small className="hint">{col.hint}</small>}
-                  </div>
-                )}
-              </td>
+    <div className="data-table-container" style={{ height: `${height}px` }}>
+      <table className="data-table">
+        <thead>
+          <tr>
+            {columns.map((col, index) => (
+              <th key={index}>{col.title}</th>
             ))}
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {[...Array(10)].map((_, rowIndex) => (
+            <tr key={rowIndex}>
+              {columns.map((col, colIndex) => (
+                <td key={colIndex}>
+                  {col.title === 'Line No' ? (
+                    <div className="line-no">{rowIndex + 1}</div>
+                  ) : (
+                    <div className="input-container">
+                      <input type={col.type} />
+                      {col.hint && <small className="hint">{col.hint}</small>}
+                    </div>
+                  )}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

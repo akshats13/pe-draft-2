@@ -1,38 +1,196 @@
-import React from 'react';
+import React, { useState, useImperativeHandle, forwardRef } from 'react';
 import './DataTable.css';
 
 const columns = [
-  { title: 'Line No', type: 'text', hint: '' },
-  { title: 'Column 2', type: 'text', hint: 'Only alphabets, digits and @#&A.()- are allowed' },
-  { title: 'Column 3', type: 'number', hint: 'Only numbers are allowed' },
-  { title: 'Column 4', type: 'text', hint: 'Only numbers are allowed' },
-  { title: 'Column 5', type: 'text', hint: 'Only numbers are allowed' },
-  { title: 'Column 6', type: 'text', hint: 'Only numbers are allowed' },
-  { title: 'Column 7', type: 'text', hint: 'Only numbers are allowed' },
-  { title: 'Column 8', type: 'text', hint: '' },
-  { title: 'Column 9', type: 'text', hint: '' },
-  { title: 'Column 10', type: 'text', hint: '' },
-  { title: 'Column 11', type: 'text', hint: '' },
-  { title: 'Column 12', type: 'text', hint: '' },
-  { title: 'Column 13', type: 'text', hint: '' },
-  { title: 'Column 14', type: 'text', hint: '' },
-  { title: 'Column 15', type: 'text', hint: '' },
-  { title: 'Column 16', type: 'text', hint: '' },
-  { title: 'Column 17', type: 'text', hint: '' },
-  { title: 'Column 18', type: 'text', hint: '' },
-  { title: 'Column 19', type: 'text', hint: '' },
-  { title: 'Column 20', type: 'text', hint: '' },
-  { title: 'Column 21', type: 'text', hint: '' },
-  { title: 'Column 22', type: 'text', hint: '' },
-  { title: 'Column 23', type: 'text', hint: '' },
-  { title: 'Column 24', type: 'text', hint: '' },
-  { title: 'Column 25', type: 'text', hint: '' },
-  { title: 'Column 26', type: 'text', hint: '' },
-  { title: 'Column 27', type: 'text', hint: '' },
-  { title: 'Column 28', type: 'text', hint: '' },
+  { 
+    title: 'Line No', 
+    type: 'text', 
+    hint: '',
+    counter: 'lineNo'
+  },
+  { 
+    title: 'Name of the person', 
+    hint: 'Only alphabets, digits and @#&A.()- are allowed',
+    counter: 'buildingNumber'
+  },
+  { 
+    title: 'Relationship to head',
+    hint: 'Only numbers are allowed',
+    counter: 'censusHouseNumber'
+  },
+  { 
+    title: 'Sex',
+    type: 'text', 
+    hint: 'Only numbers are allowed',
+    counter: 'floorMaterial'
+  },
+  { 
+    title: 'Date of birth and age', 
+    type: 'text', 
+    hint: 'Only numbers are allowed',
+    counter: 'wallMaterial'
+  },
+  { 
+    title: 'Current Marital Status',
+    type: 'text', 
+    hint: 'Only numbers are allowed',
+    counter: 'roofMaterial'
+  },
+  { 
+    title: 'Age at Marriage',
+    type: 'text', 
+    hint: 'Only numbers are allowed',
+    counter: 'useOfCensusHouse'
+  },
+  { 
+    title: 'Religion', 
+    type: 'text', 
+    hint: 'Only numbers are allowed',
+    counter: 'actualUseOfCensusHouse'
+  },
+  { 
+    title: 'SC/ST', 
+    type: 'text', 
+    hint: '',
+    counter: 'conditionOfCensusHouse'
+  },
+  { 
+    title: 'Mother Tongue', 
+    type: 'text', 
+    hint: '',
+    counter: 'householdNumber'
+  },
+  { 
+    title: 'Literacy Status', 
+    type: 'text', 
+    hint: '',
+    counter: 'headOfHousehold'
+  },
+  { 
+    title: 'Status of Attendance', 
+    type: 'text', 
+    hint: '',
+    counter: 'sex'
+  },
+  { 
+    title: 'Highest Educational Level Attained', 
+    type: 'text', 
+    hint: '',
+    counter: 'numberOfMembers'
+  },
+  { 
+    title: 'Worked anytime during last year', 
+    type: 'text', 
+    hint: '',
+    counter: 'caste'
+  },
+  { 
+    title: 'Category of economic activity', 
+    type: 'text', 
+    hint: '',
+    counter: 'religion'
+  },
+  { 
+    title: 'Occupation', 
+    type: 'text', 
+    hint: '',
+    counter: 'ownershipStatus'
+  },
+  { 
+    title: 'Name of industry', 
+    type: 'text', 
+    hint: '',
+    counter: 'numberOfDwellingRooms'
+  },
+  { 
+    title: 'Class of Worker', 
+    type: 'text', 
+    hint: '',
+    counter: 'sourceOfDrinkingWater'
+  },
+  { 
+    title: 'Economic Activity', 
+    type: 'text', 
+    hint: '',
+    counter: 'availabilityOfKitchen'
+  },
+  { 
+    title: 'Seeking or Avaialble for work', 
+    type: 'text', 
+    hint: '',
+    counter: 'fuelUsedForCooking'
+  },
+  { 
+    title: 'Birth Place', 
+    type: 'text', 
+    hint: '',
+    counter: 'latrineWithinPremises'
+  },
+  { 
+    title: 'Place of last attendance', 
+    type: 'text', 
+    hint: '',
+    counter: 'typeOfLatrine'
+  },
+  { 
+    title: 'Time of Migration', 
+    type: 'text', 
+    hint: '',
+    counter: 'wasteWaterOutlet'
+  },
+  { 
+    title: 'Reason', 
+    type: 'text', 
+    hint: '',
+    counter: 'bathingFacility'
+  },
+  { 
+    title: 'Duration of Stay', 
+    type: 'text', 
+    hint: '',
+    counter: 'availabilityOfRadio'
+  },
+  { 
+    title: 'Children Surviving', 
+    type: 'text', 
+    hint: '',
+    counter: 'availabilityOfTelevision'
+  },
+  { 
+    title: 'Children Ever Born', 
+    type: 'text', 
+    hint: '',
+    counter: 'accessToInternet'
+  },
+  { 
+    title: 'Children Born Alive', 
+    type: 'text', 
+    hint: '',
+    counter: 'modeOfTransport'
+  },
+  { 
+    title: 'Column 28', 
+    type: 'text', 
+    hint: '',
+    counter: '' // No corresponding counter in second table
+  },
 ];
 
-const DataTable = ({ height }) => {
+const DataTable = forwardRef(({ height }, ref) => {
+  const [data, setData] = useState(Array(10).fill({}).map(() => ({})));
+
+  const handleChange = (rowIndex, colTitle, value) => {
+    const newData = [...data];
+    newData[rowIndex] = { ...newData[rowIndex], [colTitle]: value };
+    setData(newData);
+  };
+
+  useImperativeHandle(ref, () => ({
+    getData: () => {
+      return data;
+    },
+  }));
+
   return (
     <div className="data-table-container" style={{ height: `${height}px` }}>
       <table className="data-table">
@@ -52,7 +210,10 @@ const DataTable = ({ height }) => {
                     <div className="line-no">{rowIndex + 1}</div>
                   ) : (
                     <div className="input-container">
-                      <input type={col.type} />
+                      <input
+                        type={col.type}
+                        onChange={(e) => handleChange(rowIndex, col.title, e.target.value)}
+                      />
                       {col.hint && <small className="hint">{col.hint}</small>}
                     </div>
                   )}
@@ -64,6 +225,6 @@ const DataTable = ({ height }) => {
       </table>
     </div>
   );
-};
+});
 
 export default DataTable;

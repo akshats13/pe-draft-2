@@ -9,14 +9,37 @@ import './App.css';
 function App() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [tableHeight, setTableHeight] = useState(0);
+  const [fileVersion, setFileVersion] = useState(0);
   const appRef = useRef(null);
+  const dataTableRef = useRef(null);
 
   const handleLocationSubmit = () => {
     setIsSubmitted(true);
   };
 
-  const handleDataSubmit = () => {
-    toast.success('Data submitted successfully!');
+  const handleDataSubmit = async () => {
+    const data = dataTableRef.current.getData();
+    const newVersion = fileVersion + 1;
+    setFileVersion(newVersion);
+
+    try {
+      const response = await fetch('/api/save_record', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ data, version: newVersion }),
+      });
+
+      if (response.ok) {
+        toast.success('Record saved successfully!');
+      } else {
+        toast.error('Error saving record');
+      }
+    } catch (error) {
+      console.error('Error saving record:', error);
+      toast.error('Error saving record');
+    }
   };
 
   useEffect(() => {
@@ -62,7 +85,7 @@ function App() {
         {isSubmitted && (
           <div className="data-table-wrapper">
             <h2 className="title-style">Houselisting Block</h2>
-            <DataTable height={tableHeight} />
+            <DataTable ref={dataTableRef} height={tableHeight} />
             <Footer onSubmit={handleDataSubmit} />
           </div>
         )}

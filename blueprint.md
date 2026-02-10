@@ -10,6 +10,9 @@ This is a web application for census data collection. It features a form for loc
 *   **Data Persistence:** A Node.js/Express backend saves draft and final data to the file system.
 *   **Vite Proxy:** The Vite development server is configured to proxy API requests to the backend.
 *   **Styling:** The application has a clean, modern interface with custom CSS.
+*   **Dynamic Table Headers:** The data table headers are now dynamically rendered based on the columns that are visible across all rows. This ensures a stable and intuitive table layout.
+*   **Religion Dropdown:** The "Religion" column in the data table has been changed from a text input to a dropdown with predefined options. An "Others" option reveals a text input for manual entry.
+*   **Q23 Last Residence Fix:** Corrected duplicate IDs in the "Last Residence" section (Q23) to ensure all sub-questions render correctly.
 
 ## Current Plan: UI Refinements and Workflow Automation
 

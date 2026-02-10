@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import './DataTable.css';
 import { hierarchicalColumns } from './hierarchicalColumns.js';
 import { FiMaximize, FiMinimize, FiTrash2 } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
 
 const DataTable = () => {
-  const allFields = hierarchicalColumns.flatMap(col => col.fields);
+  const allFields = useMemo(() => hierarchicalColumns.flatMap(col => col.fields), []);
 
   const [data, setData] = useState(() => {
     const initialData = Array(10).fill({}).map(() => {
@@ -23,10 +23,45 @@ const DataTable = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const autosaveIntervalRef = useRef(null);
   const dataRef = useRef(data);
+  const [visibleFields, setVisibleFields] = useState(allFields);
+  const [visibleColumns, setVisibleColumns] = useState(hierarchicalColumns);
 
   useEffect(() => {
       dataRef.current = data;
   }, [data]);
+
+  const isFieldVisible = useCallback((field, rowData) => {
+    if (!field.conditional) return true;
+    if (typeof field.conditional === 'function') {
+      return field.conditional(rowData);
+    }
+    return true;
+  }, []);
+
+  useEffect(() => {
+    const allVisibleFieldIds = new Set();
+    data.forEach(rowData => {
+      allFields.forEach(field => {
+        if (isFieldVisible(field, rowData)) {
+          allVisibleFieldIds.add(field.id);
+        }
+      });
+    });
+
+    const newVisibleFields = allFields.filter(field => allVisibleFieldIds.has(field.id));
+    setVisibleFields(newVisibleFields);
+
+    const newVisibleColumns = hierarchicalColumns.map(col => {
+      const visibleFieldsInCol = col.fields.filter(field => allVisibleFieldIds.has(field.id));
+      if (visibleFieldsInCol.length > 0) {
+        return { ...col, fields: visibleFieldsInCol };
+      }
+      return null;
+    }).filter(Boolean);
+
+    setVisibleColumns(newVisibleColumns);
+  }, [data, allFields, isFieldVisible]);
+
 
   useEffect(() => {
     const loadDraft = async () => {
@@ -113,14 +148,6 @@ const DataTable = () => {
       };
       return newData;
     });
-  };
-
-  const isFieldVisible = (field, rowData) => {
-    if (!field.conditional) return true;
-    if (typeof field.conditional === 'function') {
-      return field.conditional(rowData);
-    }
-    return true;
   };
 
   const renderFieldType = (field, rowIndex, rowData) => {
@@ -226,7 +253,7 @@ const DataTable = () => {
   }
 
   const lastFieldIds = new Set(
-    hierarchicalColumns.map(col => col.fields[col.fields.length - 1].id)
+    visibleColumns.map(col => col.fields[col.fields.length - 1].id)
   );
 
   return (
@@ -250,14 +277,14 @@ const DataTable = () => {
       <table>
           <thead>
             <tr>
-              {hierarchicalColumns.map((col, index) => (
+              {visibleColumns.map((col, index) => (
                 <th key={index} colSpan={col.fields.length}>
                   {col.title}
                 </th>
               ))}
             </tr>
             <tr>
-                {allFields.map((field, index) => (
+                {visibleFields.map((field, index) => (
                     <th key={index}>{field.label}</th>
                 ))}
             </tr>
@@ -265,7 +292,7 @@ const DataTable = () => {
           <tbody>
             {data.map((row, rowIndex) => (
               <tr key={rowIndex}>
-                {allFields.map((field) => (
+                {visibleFields.map((field) => (
                   <td 
                     key={field.id}
                     className={`${lastFieldIds.has(field.id) ? 'main-question-border' : ''}`}>

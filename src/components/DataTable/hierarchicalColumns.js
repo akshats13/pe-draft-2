@@ -96,7 +96,22 @@ export const hierarchicalColumns = [
       {
         id: 'q7_religion',
         // label: 'Religion',
+        type: 'select',
+        options: [
+          { value: '1', label: 'Hindu' },
+          { value: '2', label: 'Muslim' },
+          { value: '3', label: 'Christian' },
+          { value: '4', label: 'Sikh' },
+          { value: '5', label: 'Buddhist' },
+          { value: '6', label: 'Jain' },
+          { value: '7', label: 'Others' },
+        ],
+      },
+      {
+        id: 'q7_religion_other',
+        label: 'Other Religion',
         type: 'text',
+        conditional: (rowData) => rowData.q7_religion === '7',
         placeholder: 'Write religion name',
       },
     ],
@@ -468,14 +483,14 @@ export const hierarchicalColumns = [
         placeholder: 'If came from elsewhere'
       },
       {
-        id: 'q23a_last_residence_district',
-        label: 'District',
+        id: 'q23b_last_residence_district',
+        label: '(b) District',
         type: 'text',
         placeholder: 'If within India'
       },
       {
-        id: 'q23b_rural_urban',
-        label: '(b) Rural/Urban status',
+        id: 'q23c_rural_urban',
+        label: '(c) Rural/Urban status',
         type: 'select',
         options: [
           { value: '1', label: 'Rural' },

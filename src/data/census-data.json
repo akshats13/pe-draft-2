@@ -169,7 +169,7 @@
         "label": "(c) Multiple disabilities (max 3)",
         "type": "text",
         "placeholder": "e.g., 1, 4, 8",
-        "conditional": "rowData.q9a_is_disabled === '1'"
+        "conditional": "rowData.q9b_disability_type === '0'"
       }
     ]
   },
@@ -215,7 +215,8 @@
         "options": [
           { "value": "1", "label": "Yes" },
           { "value": "-", "label": "No" }
-        ]
+        ],
+        "conditional": "rowData.q11a_literacy === '1'"
       }
     ]
   },
@@ -286,7 +287,8 @@
           { "value": "10", "label": "Law" },
           { "value": "11", "label": "Agriculture & allied" },
           { "value": "12", "label": "Other" }
-        ]
+        ],
+        "conditional": "parseInt(rowData.q13a_education_level, 10) >= 11"
       }
     ]
   },
@@ -322,7 +324,8 @@
             { "value": "6", "label": "Other: Construction" },
             { "value": "7", "label": "Other: Services" },
             { "value": "8", "label": "Other: Other activities" }
-        ]
+        ],
+        "conditional": "['1', '2', '3'].includes(rowData.q14_work_status)"
       }
     ]
   },
@@ -337,7 +340,8 @@
           { "value": "1", "label": "Yes - Full time" },
           { "value": "2", "label": "Yes - Part time" },
           { "value": "3", "label": "No" }
-        ]
+        ],
+        "conditional": "['2', '3', '4'].includes(rowData.q14_work_status)"
       }
     ]
   },
@@ -348,7 +352,8 @@
         "id": "q17_occupation",
         "label": "Occupation",
         "type": "text",
-        "placeholder": "Description of actual work"
+        "placeholder": "Description of actual work",
+        "conditional": "['1', '2', '3'].includes(rowData.q14_work_status)"
       }
     ]
   },
@@ -364,7 +369,8 @@
           { "value": "2", "label": "Employee" },
           { "value": "3", "label": "Single worker" },
           { "value": "4", "label": "Family worker" }
-        ]
+        ],
+        "conditional": "['1', '2', '3'].includes(rowData.q14_work_status)"
       }
     ]
   },
@@ -383,7 +389,8 @@
           { "value": "5", "label": "Rentier" },
           { "value": "6", "label": "Beggar" },
           { "value": "7", "label": "Other" }
-        ]
+        ],
+        "conditional": "['2', '3', '4'].includes(rowData.q14_work_status)"
       }
     ]
   },
@@ -394,7 +401,8 @@
         "id": "q20_industry_trade",
         "label": "Nature of industry, trade, service",
         "type": "text",
-        "placeholder": "Full description"
+        "placeholder": "Full description",
+        "conditional": "['3', '4', '5', '6', '7', '8'].includes(rowData.q15_economic_activity)"
       }
     ]
   },
@@ -405,20 +413,23 @@
         "id": "q21a_distance",
         "label": "(a) Distance to work (Km)",
         "type": "number",
-        "min": 0
+        "min": 0,
+        "conditional": "['4', '5', '6', '7', '8'].includes(rowData.q15_economic_activity)"
       },
       {
         "id": "q21a_time_hr",
         "label": "Time (hours)",
         "type": "number",
-        "min": 0
+        "min": 0,
+        "conditional": "['4', '5', '6', '7', '8'].includes(rowData.q15_economic_activity)"
       },
       {
         "id": "q21a_time_min",
         "label": "Time (minutes)",
         "type": "number",
         "min": 0,
-        "max": 59
+        "max": 59,
+        "conditional": "['4', '5', '6', '7', '8'].includes(rowData.q15_economic_activity)"
       },
       {
         "id": "q21b_travel_mode",
@@ -435,7 +446,8 @@
             { "value": "8", "label": "Water Transport" },
             { "value": "9", "label": "Any other" },
             { "value": "0", "label": "No Travel" }
-        ]
+        ],
+        "conditional": "['4', '5', '6', '7', '8'].includes(rowData.q15_economic_activity)"
       }
     ]
   },
@@ -478,7 +490,8 @@
         "options": [
           { "value": "1", "label": "Rural" },
           { "value": "2", "label": "Urban" }
-        ]
+        ],
+        "conditional": "!!rowData.q23a_last_residence_state"
       }
     ]
   },
@@ -498,7 +511,8 @@
           { "value": "6", "label": "Moved with household" },
           { "value": "7", "label": "Natural calamities" },
           { "value": "8", "label": "Any other" }
-        ]
+        ],
+        "conditional": "!!rowData.q23a_last_residence_state"
       }
     ]
   },
@@ -510,7 +524,8 @@
         "label": "Duration of stay (in years)",
         "type": "number",
         "min": 0,
-        "placeholder": "00 if < 1 year"
+        "placeholder": "00 if < 1 year",
+        "conditional": "!!rowData.q23a_last_residence_state"
       }
     ]
   },
@@ -521,13 +536,15 @@
         "id": "q26_children_ever_born_d",
         "label": "Daughters",
         "type": "number",
-        "min": 0
+        "min": 0,
+        "conditional": "rowData.q3_sex === '2' && ['2', '3', '4', '5'].includes(rowData.q5_marital_status)"
       },
       {
         "id": "q26_children_ever_born_s",
         "label": "Sons",
         "type": "number",
-        "min": 0
+        "min": 0,
+        "conditional": "rowData.q3_sex === '2' && ['2', '3', '4', '5'].includes(rowData.q5_marital_status)"
       }
     ]
   },
@@ -538,13 +555,15 @@
         "id": "q27_children_surviving_d",
         "label": "Daughters",
         "type": "number",
-        "min": 0
+        "min": 0,
+        "conditional": "rowData.q3_sex === '2' && ['2', '3', '4', '5'].includes(rowData.q5_marital_status)"
       },
       {
         "id": "q27_children_surviving_s",
         "label": "Sons",
         "type": "number",
-        "min": 0
+        "min": 0,
+        "conditional": "rowData.q3_sex === '2' && ['2', '3', '4', '5'].includes(rowData.q5_marital_status)"
       }
     ]
   },
@@ -555,13 +574,15 @@
         "id": "q28_children_last_year_d",
         "label": "Daughters",
         "type": "number",
-        "min": 0
+        "min": 0,
+        "conditional": "rowData.q3_sex === '2' && rowData.q5_marital_status === '2'"
       },
       {
         "id": "q28_children_last_year_s",
         "label": "Sons",
         "type": "number",
-        "min": 0
+        "min": 0,
+        "conditional": "rowData.q3_sex === '2' && rowData.q5_marital_status === '2'"
       }
     ]
   }

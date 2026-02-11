@@ -1,3 +1,4 @@
+
 .datatable-container {
     background-color: #f0f2f5;
     border-radius: 8px;
@@ -164,21 +165,19 @@
     position: sticky;
     top: 0;
     z-index: 1;
-  }
-
-  thead tr:nth-child(1) th:not(:last-child) {
-    border-right: 1px solid #dee2e6; /* Vertical borders for main question headers */
-  }
-
-  thead tr:nth-child(1) th {
     text-align: center;
+    border-bottom: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
   }
-
+  
+  thead tr th:last-child {
+    border-right: none;
+  }
+  
+  /* Make the second row of headers sticky below the first */
   thead tr:nth-child(2) th {
-    border-bottom: 1px solid #dee2e6; /* Single border below the entire header */
-    text-align: center;
-    top: 49px; /* Height of the first header row */
-    border-left: 1px solid #dee2e6;
+    /* Calculated based on 20px top/bottom padding + ~21px line height */
+    top: 61px;
   }
   
   td > div {

@@ -1,96 +1,92 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import './DataTable.css';
-import { hierarchicalColumns } from './hierarchicalColumns.js';
 import { FiMaximize, FiMinimize, FiTrash2 } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
 
 const DataTable = () => {
-  const allFields = useMemo(() => hierarchicalColumns.flatMap(col => col.fields), []);
+  const [hierarchicalColumns, setHierarchicalColumns] = useState([]);
+  const allFields = useMemo(() => hierarchicalColumns.flatMap(col => col.fields), [hierarchicalColumns]);
 
-  const [data, setData] = useState(() => {
-    const initialData = Array(10).fill({}).map(() => {
-      const rowData = {};
-      allFields.forEach(field => {
-        rowData[field.id] = '';
-      });
-      return rowData;
-    });
-    return initialData;
-  });
-
+  const [data, setData] = useState([]);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isAutosaveEnabled, setIsAutosaveEnabled] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const autosaveIntervalRef = useRef(null);
   const dataRef = useRef(data);
-  const [visibleFields, setVisibleFields] = useState(allFields);
-  const [visibleColumns, setVisibleColumns] = useState(hierarchicalColumns);
+  const [visibleFields, setVisibleFields] = useState([]);
+  const [visibleColumns, setVisibleColumns] = useState([]);
 
   useEffect(() => {
-      dataRef.current = data;
+    dataRef.current = data;
   }, [data]);
 
   const isFieldVisible = useCallback((field, rowData) => {
     if (!field.conditional) return true;
-    if (typeof field.conditional === 'function') {
-      return field.conditional(rowData);
+    
+    try {
+      const func = new Function('rowData', `return ${field.conditional}`);
+      return func(rowData);
+    } catch (e) {
+      console.error('Error evaluating conditional', e);
+      return true;
     }
-    return true;
   }, []);
 
   useEffect(() => {
-    const allVisibleFieldIds = new Set();
-    data.forEach(rowData => {
-      allFields.forEach(field => {
-        if (isFieldVisible(field, rowData)) {
-          allVisibleFieldIds.add(field.id);
+    if (data.length > 0) {
+        const allVisibleFieldIds = new Set();
+        data.forEach(rowData => {
+        allFields.forEach(field => {
+            if (isFieldVisible(field, rowData)) {
+            allVisibleFieldIds.add(field.id);
+            }
+        });
+        });
+
+        const newVisibleFields = allFields.filter(field => allVisibleFieldIds.has(field.id));
+        setVisibleFields(newVisibleFields);
+
+        const newVisibleColumns = hierarchicalColumns.map(col => {
+        const visibleFieldsInCol = col.fields.filter(field => allVisibleFieldIds.has(field.id));
+        if (visibleFieldsInCol.length > 0) {
+            return { ...col, fields: visibleFieldsInCol };
         }
-      });
-    });
+        return null;
+        }).filter(Boolean);
 
-    const newVisibleFields = allFields.filter(field => allVisibleFieldIds.has(field.id));
-    setVisibleFields(newVisibleFields);
-
-    const newVisibleColumns = hierarchicalColumns.map(col => {
-      const visibleFieldsInCol = col.fields.filter(field => allVisibleFieldIds.has(field.id));
-      if (visibleFieldsInCol.length > 0) {
-        return { ...col, fields: visibleFieldsInCol };
-      }
-      return null;
-    }).filter(Boolean);
-
-    setVisibleColumns(newVisibleColumns);
-  }, [data, allFields, isFieldVisible]);
-
+        setVisibleColumns(newVisibleColumns);
+    }
+  }, [data, allFields, isFieldVisible, hierarchicalColumns]);
 
   useEffect(() => {
-    const loadDraft = async () => {
-        try {
-            const response = await fetch('/api/get_draft');
-            if (response.ok) {
-                const draftData = await response.json();
-                if (draftData && draftData.length > 0) {
-                    setData(draftData);
-                    toast.success('Previously saved draft loaded.');
-                }
-            }
-        } catch (error) {
-            console.error('Error loading draft:', error);
-            const savedData = localStorage.getItem('censusData');
-            if (savedData) {
-              try {
-                const parsedData = JSON.parse(savedData);
-                if (Array.isArray(parsedData)) {
-                  setData(parsedData);
-                }
-              } catch (e) {
-                console.error('Error parsing census data from localStorage', e);
-              }
-            }
+    const loadInitialData = async () => {
+      try {
+        const response = await fetch('/api/census-data');
+
+        if (response.ok) {
+          const fetchedColumns = await response.json();
+          setHierarchicalColumns(fetchedColumns);
+
+          const fields = fetchedColumns.flatMap(col => col.fields);
+          const initialData = Array(10).fill({}).map(() => {
+            const rowData = {};
+            fields.forEach(field => {
+              rowData[field.id] = '';
+            });
+            return rowData;
+          });
+          setData(initialData);
+          toast.success('Form structure loaded.');
+        } else {
+          throw new Error('Failed to load form structure');
         }
+      } catch (error) {
+        console.error('Error loading initial data:', error);
+        toast.error('Could not load form structure. Please refresh.');
+      }
     };
 
-    loadDraft();
+    loadInitialData();
 
     return () => {
       if (autosaveIntervalRef.current) {
@@ -243,6 +239,47 @@ const DataTable = () => {
   const toggleFullScreen = () => setIsFullScreen(!isFullScreen);
   const toggleAutosave = () => setIsAutosaveEnabled(prev => !prev);
 
+  const headerRows = useMemo(() => {
+    const topRow = [];
+    const bottomRow = [];
+
+    visibleColumns.forEach((col, colIndex) => {
+      const hasLabel = col.fields.length > 1 || (col.fields.length === 1 && col.fields[0].label);
+
+      if (hasLabel) {
+        // This is a multi-field column or a single field with a label.
+        topRow.push(
+          <th key={`${col.title}-${colIndex}`} colSpan={col.fields.length}>
+            {col.title}
+          </th>
+        );
+        col.fields.forEach(field => {
+          bottomRow.push(<th key={field.id}>{field.label}</th>);
+        });
+      } else {
+        // This is a single field column without a label, so we use the column's title.
+        topRow.push(
+          <th key={`${col.title}-${colIndex}`} rowSpan={2}>
+            {col.title}
+          </th>
+        );
+      }
+    });
+
+    return { topRow, bottomRow };
+  }, [visibleColumns]);
+
+  const lastFieldIds = useMemo(() => {
+    const ids = new Set();
+    visibleColumns.forEach(col => {
+      if (col.fields.length > 0) {
+        ids.add(col.fields[col.fields.length - 1].id);
+      }
+    });
+    return ids;
+  }, [visibleColumns]);
+
+
   if (isSubmitted) {
     return (
         <div className="submission-success">
@@ -251,10 +288,6 @@ const DataTable = () => {
         </div>
     )
   }
-
-  const lastFieldIds = new Set(
-    visibleColumns.map(col => col.fields[col.fields.length - 1].id)
-  );
 
   return (
     <div className={`datatable-container ${isFullScreen ? 'fullscreen' : ''}`}>
@@ -276,18 +309,8 @@ const DataTable = () => {
       <div className="table-wrapper">
       <table>
           <thead>
-            <tr>
-              {visibleColumns.map((col, index) => (
-                <th key={index} colSpan={col.fields.length}>
-                  {col.title}
-                </th>
-              ))}
-            </tr>
-            <tr>
-                {visibleFields.map((field, index) => (
-                    <th key={index}>{field.label}</th>
-                ))}
-            </tr>
+            <tr>{headerRows.topRow}</tr>
+            {headerRows.bottomRow.length > 0 && <tr>{headerRows.bottomRow}</tr>}
           </thead>
           <tbody>
             {data.map((row, rowIndex) => (

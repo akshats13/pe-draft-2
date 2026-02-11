@@ -1,0 +1,568 @@
+
+[
+  {
+    "title": "Q1. Name & Bank Accounts",
+    "fields": [
+      {
+        "id": "q1a_name",
+        "label": "(a) Name of the person",
+        "type": "text",
+        "placeholder": "Start with head of household"
+      },
+      {
+        "id": "q1b_bank_accounts",
+        "label": "(b) Number of bank accounts",
+        "type": "number",
+        "min": 0,
+        "placeholder": "0, 1, 2..."
+      }
+    ]
+  },
+  {
+    "title": "Q2. Relationship to Head",
+    "fields": [
+      {
+        "id": "q2_relationship",
+        "type": "text",
+        "placeholder": "e.g., Head, Wife, Son"
+      }
+    ]
+  },
+  {
+    "title": "Q3. Sex",
+    "fields": [
+      {
+        "id": "q3_sex",
+        "type": "select",
+        "options": [
+          { "value": "1", "label": "Male" },
+          { "value": "2", "label": "Female" },
+          { "value": "3", "label": "Transgender/Other" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Q4. Date of Birth & Age",
+    "fields": [
+      {
+        "id": "q4a_dob",
+        "label": "(a) Date of Birth",
+        "type": "date"
+      },
+      {
+        "id": "q4b_age",
+        "label": "(b) Age",
+        "type": "number",
+        "min": 0,
+        "placeholder": "Completed years"
+      }
+    ]
+  },
+  {
+    "title": "Q5. Marital Status",
+    "fields": [
+      {
+        "id": "q5_marital_status",
+        "type": "select",
+        "options": [
+          { "value": "1", "label": "Never married" },
+          { "value": "2", "label": "Currently married" },
+          { "value": "3", "label": "Widowed" },
+          { "value": "4", "label": "Separated" },
+          { "value": "5", "label": "Divorced" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Q6. Age at Marriage (in years)",
+    "fields": [
+      {
+        "id": "q6_age_at_marriage",
+        "type": "number",
+        "min": 0,
+        "placeholder": "For married, widowed, etc.",
+        "conditional": "rowData.q5_marital_status && rowData.q5_marital_status !== '1'"
+      }
+    ]
+  },
+  {
+    "title": "Q7. Religion",
+    "fields": [
+      {
+        "id": "q7_religion",
+        "type": "select",
+        "options": [
+          { "value": "1", "label": "Hindu" },
+          { "value": "2", "label": "Muslim" },
+          { "value": "3", "label": "Christian" },
+          { "value": "4", "label": "Sikh" },
+          { "value": "5", "label": "Buddhist" },
+          { "value": "6", "label": "Jain" },
+          { "value": "7", "label": "Others" }
+        ]
+      },
+      {
+        "id": "q7_religion_other",
+        "label": "Other Religion",
+        "type": "text",
+        "placeholder": "Write religion name",
+        "conditional": "rowData.q7_religion === '7'"
+      }
+    ]
+  },
+  {
+    "title": "Q8. SC/ST",
+    "fields": [
+      {
+        "id": "q8a_is_sc_st",
+        "label": "(a) Is this person SC/ST?",
+        "type": "select",
+        "options": [
+          { "value": "1", "label": "SC" },
+          { "value": "2", "label": "ST" },
+          { "value": "3", "label": "No" }
+        ]
+      },
+      {
+        "id": "q8b_sc_st_name",
+        "label": "(b) Name of Caste/Tribe",
+        "type": "text",
+        "placeholder": "Name of SC/ST",
+        "conditional": "rowData.q8a_is_sc_st === '1' || rowData.q8a_is_sc_st === '2'"
+      }
+    ]
+  },
+  {
+    "title": "Q9. Disability",
+    "fields": [
+      {
+        "id": "q9a_is_disabled",
+        "label": "(a) Mentally/physically disabled?",
+        "type": "select",
+        "options": [
+          { "value": "1", "label": "Yes" },
+          { "value": "2", "label": "No" }
+        ]
+      },
+      {
+        "id": "q9b_disability_type",
+        "label": "(b) Type of disability",
+        "type": "select",
+        "options": [
+          { "value": "1", "label": "In Seeing" },
+          { "value": "2", "label": "In Hearing" },
+          { "value": "3", "label": "In Speech" },
+          { "value": "4", "label": "In Mobility" },
+          { "value": "5", "label": "Intellectual disability" },
+          { "value": "6", "label": "Mental illness" },
+          { "value": "7", "label": "Due to acid attack" },
+          { "value": "8", "label": "Due to chronic neurological disease" },
+          { "value": "9", "label": "Due to blood disorder" },
+          { "value": "0", "label": "Multiple disability" }
+        ],
+        "conditional": "rowData.q9a_is_disabled === '1'"
+      },
+      {
+        "id": "q9c_multiple_disability",
+        "label": "(c) Multiple disabilities (max 3)",
+        "type": "text",
+        "placeholder": "e.g., 1, 4, 8",
+        "conditional": "rowData.q9a_is_disabled === '1'"
+      }
+    ]
+  },
+  {
+    "title": "Q10. Languages Known",
+    "fields": [
+      {
+        "id": "q10a_mother_tongue",
+        "label": "(a) Mother tongue",
+        "type": "text",
+        "placeholder": "Name of mother tongue"
+      },
+      {
+        "id": "q10b_language1",
+        "label": "(b) Language 1",
+        "type": "text",
+        "placeholder": "Other language known"
+      },
+      {
+        "id": "q10c_language2",
+        "label": "(c) Language 2",
+        "type": "text",
+        "placeholder": "Another language known"
+      }
+    ]
+  },
+  {
+    "title": "Q11. Literacy",
+    "fields": [
+      {
+        "id": "q11a_literacy",
+        "label": "(a) Literacy status",
+        "type": "select",
+        "options": [
+          { "value": "1", "label": "Literate" },
+          { "value": "2", "label": "Illiterate" }
+        ]
+      },
+      {
+        "id": "q11b_digital_literacy",
+        "label": "(b) Digitally literate?",
+        "type": "select",
+        "options": [
+          { "value": "1", "label": "Yes" },
+          { "value": "-", "label": "No" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Q12. Education Attendance",
+    "fields": [
+      {
+        "id": "q12_education_attendance",
+        "type": "select",
+        "options": [
+          { "value": "1", "label": "Attending: School" },
+          { "value": "2", "label": "Attending: College" },
+          { "value": "3", "label": "Attending: Vocational" },
+          { "value": "4", "label": "Attending: Professional" },
+          { "value": "5", "label": "Attending: Special institution" },
+          { "value": "6", "label": "Attending: Literacy centre" },
+          { "value": "7", "label": "Attending: Other" },
+          { "value": "8", "label": "Not attending: Attended before" },
+          { "value": "9", "label": "Not attending: Never attended" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Q13. Highest Education",
+    "fields": [
+      {
+        "id": "q13a_education_level",
+        "label": "(a) Highest level attained",
+        "type": "select",
+        "options": [
+          { "value": "00", "label": "Pre-primary" },
+          { "value": "01", "label": "Class 1" },
+          { "value": "02", "label": "Class 2" },
+          { "value": "03", "label": "Class 3" },
+          { "value": "04", "label": "Class 4" },
+          { "value": "05", "label": "Class 5" },
+          { "value": "06", "label": "Class 6" },
+          { "value": "07", "label": "Class 7" },
+          { "value": "08", "label": "Class 8" },
+          { "value": "09", "label": "Class 9" },
+          { "value": "10", "label": "Class 10" },
+          { "value": "11", "label": "Class 11" },
+          { "value": "12", "label": "Class 12" },
+          { "value": "13", "label": "I.T.I." },
+          { "value": "14", "label": "Diploma/certificate" },
+          { "value": "15", "label": "Bachelor/undergraduate" },
+          { "value": "16", "label": "PG Diploma" },
+          { "value": "17", "label": "Masters/Post graduate" },
+          { "value": "18", "label": "M.Phil." },
+          { "value": "19", "label": "Doctorate & above" }
+        ]
+      },
+      {
+        "id": "q13b_education_stream",
+        "label": "(b) Stream/Discipline",
+        "type": "select",
+        "options": [
+          { "value": "01", "label": "Arts/Social science" },
+          { "value": "02", "label": "Science" },
+          { "value": "03", "label": "Commerce" },
+          { "value": "04", "label": "Engineering & Technology" },
+          { "value": "05", "label": "IT & Computer" },
+          { "value": "06", "label": "Language" },
+          { "value": "07", "label": "Medical science" },
+          { "value": "08", "label": "Education" },
+          { "value": "09", "label": "Management" },
+          { "value": "10", "label": "Law" },
+          { "value": "11", "label": "Agriculture & allied" },
+          { "value": "12", "label": "Other" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Q14. Work Status",
+    "fields": [
+      {
+        "id": "q14_work_status",
+        "label": "Worked any time last year?",
+        "type": "select",
+        "options": [
+          { "value": "1", "label": "Yes: Main worker (6+ months)" },
+          { "value": "2", "label": "Yes: Marginal worker (3-6 months)" },
+          { "value": "3", "label": "Yes: Marginal worker (<3 months)" },
+          { "value": "4", "label": "No: Non-worker" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Q15. Economic Activity",
+    "fields": [
+      {
+        "id": "q15_economic_activity",
+        "label": "Category of economic activity",
+        "type": "select",
+        "options": [
+            { "value": "1", "label": "Cultivator" },
+            { "value": "2", "label": "Agricultural labourer" },
+            { "value": "3", "label": "Worker in household industry" },
+            { "value": "4", "label": "Other: Plantation/livestock etc." },
+            { "value": "5", "label": "Other: Manufacturing" },
+            { "value": "6", "label": "Other: Construction" },
+            { "value": "7", "label": "Other: Services" },
+            { "value": "8", "label": "Other: Other activities" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Q16. Seeking Work",
+    "fields": [
+      {
+        "id": "q16_seeking_work",
+        "label": "Seeking or available for work?",
+        "type": "select",
+        "options": [
+          { "value": "1", "label": "Yes - Full time" },
+          { "value": "2", "label": "Yes - Part time" },
+          { "value": "3", "label": "No" }
+        ]
+      }
+    ]
+  },
+    {
+    "title": "Q17. Occupation",
+    "fields": [
+      {
+        "id": "q17_occupation",
+        "label": "Occupation",
+        "type": "text",
+        "placeholder": "Description of actual work"
+      }
+    ]
+  },
+  {
+    "title": "Q18. Class of Worker",
+    "fields": [
+      {
+        "id": "q18_class_of_worker",
+        "label": "Class of worker",
+        "type": "select",
+        "options": [
+          { "value": "1", "label": "Employer" },
+          { "value": "2", "label": "Employee" },
+          { "value": "3", "label": "Single worker" },
+          { "value": "4", "label": "Family worker" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Q19. Non-Economic Activity",
+    "fields": [
+      {
+        "id": "q19_non_economic_activity",
+        "label": "Non-economic activity",
+        "type": "select",
+        "options": [
+          { "value": "1", "label": "Student" },
+          { "value": "2", "label": "Household duties" },
+          { "value": "3", "label": "Dependent" },
+          { "value": "4", "label": "Pensioner" },
+          { "value": "5", "label": "Rentier" },
+          { "value": "6", "label": "Beggar" },
+          { "value": "7", "label": "Other" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Q20. Industry/Trade",
+    "fields": [
+      {
+        "id": "q20_industry_trade",
+        "label": "Nature of industry, trade, service",
+        "type": "text",
+        "placeholder": "Full description"
+      }
+    ]
+  },
+  {
+    "title": "Q21. Travel to Work",
+    "fields": [
+      {
+        "id": "q21a_distance",
+        "label": "(a) Distance to work (Km)",
+        "type": "number",
+        "min": 0
+      },
+      {
+        "id": "q21a_time_hr",
+        "label": "Time (hours)",
+        "type": "number",
+        "min": 0
+      },
+      {
+        "id": "q21a_time_min",
+        "label": "Time (minutes)",
+        "type": "number",
+        "min": 0,
+        "max": 59
+      },
+      {
+        "id": "q21b_travel_mode",
+        "label": "(b) Mode of travel",
+        "type": "select",
+        "options": [
+            { "value": "1", "label": "On foot" },
+            { "value": "2", "label": "Bicycle" },
+            { "value": "3", "label": "Moped/Scooter/Motorcycle" },
+            { "value": "4", "label": "Car/Jeep/Van" },
+            { "value": "5", "label": "Tempo/Autorickshaw/Taxi" },
+            { "value": "6", "label": "Bus" },
+            { "value": "7", "label": "Train/Metro" },
+            { "value": "8", "label": "Water Transport" },
+            { "value": "9", "label": "Any other" },
+            { "value": "0", "label": "No Travel" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Q22. Birth Place",
+    "fields": [
+      {
+        "id": "q22_birth_place_state",
+        "label": "State/Country",
+        "type": "text",
+        "placeholder": "If outside this village/town"
+      },
+      {
+        "id": "q22_birth_place_district",
+        "label": "District",
+        "type": "text",
+        "placeholder": "If within India"
+      }
+    ]
+  },
+  {
+    "title": "Q23. Last Residence",
+    "fields": [
+      {
+        "id": "q23a_last_residence_state",
+        "label": "(a) State/Country",
+        "type": "text",
+        "placeholder": "If came from elsewhere"
+      },
+      {
+        "id": "q23b_last_residence_district",
+        "label": "(b) District",
+        "type": "text",
+        "placeholder": "If within India"
+      },
+      {
+        "id": "q23c_rural_urban",
+        "label": "(c) Rural/Urban status",
+        "type": "select",
+        "options": [
+          { "value": "1", "label": "Rural" },
+          { "value": "2", "label": "Urban" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Q24. Reason for Migration",
+    "fields": [
+      {
+        "id": "q24_migration_reason",
+        "label": "Reason for migration",
+        "type": "select",
+        "options": [
+          { "value": "1", "label": "Work/Employment" },
+          { "value": "2", "label": "Business" },
+          { "value": "3", "label": "Education" },
+          { "value": "4", "label": "Marriage" },
+          { "value": "5", "label": "Moved after birth" },
+          { "value": "6", "label": "Moved with household" },
+          { "value": "7", "label": "Natural calamities" },
+          { "value": "8", "label": "Any other" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Q25. Duration of Stay",
+    "fields": [
+      {
+        "id": "q25_duration_of_stay",
+        "label": "Duration of stay (in years)",
+        "type": "number",
+        "min": 0,
+        "placeholder": "00 if < 1 year"
+      }
+    ]
+  },
+  {
+    "title": "Q26. Children Ever Born",
+    "fields": [
+      {
+        "id": "q26_children_ever_born_d",
+        "label": "Daughters",
+        "type": "number",
+        "min": 0
+      },
+      {
+        "id": "q26_children_ever_born_s",
+        "label": "Sons",
+        "type": "number",
+        "min": 0
+      }
+    ]
+  },
+  {
+    "title": "Q27. Children Surviving",
+    "fields": [
+      {
+        "id": "q27_children_surviving_d",
+        "label": "Daughters",
+        "type": "number",
+        "min": 0
+      },
+      {
+        "id": "q27_children_surviving_s",
+        "label": "Sons",
+        "type": "number",
+        "min": 0
+      }
+    ]
+  },
+  {
+    "title": "Q28. Children Born Last Year",
+    "fields": [
+      {
+        "id": "q28_children_last_year_d",
+        "label": "Daughters",
+        "type": "number",
+        "min": 0
+      },
+      {
+        "id": "q28_children_last_year_s",
+        "label": "Sons",
+        "type": "number",
+        "min": 0
+      }
+    ]
+  }
+]

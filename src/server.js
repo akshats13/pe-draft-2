@@ -18,6 +18,7 @@ const projectRoot = path.join(__dirname, '..');
 const draftDir = path.join(projectRoot, 'draft');
 const canonDir = path.join(projectRoot, 'canon');
 const draftFilePath = path.join(draftDir, 'draft.json');
+const censusDataPath = path.join(__dirname, 'data', 'census-data.json');
 
 const ensureDirs = () => {
   try {
@@ -33,6 +34,17 @@ const ensureDirs = () => {
 };
 
 ensureDirs();
+
+app.get('/api/census-data', async (req, res) => {
+  console.log('Get census-data called at:', new Date().toISOString());
+  try {
+    const data = await fsPromises.readFile(censusDataPath, 'utf-8');
+    res.status(200).send(JSON.parse(data));
+  } catch (err) {
+    console.error('Error getting census data:', err);
+    res.status(500).send({ message: 'Error getting census data' });
+  }
+});
 
 app.post('/api/save_draft', async (req, res) => {
   console.log('Save draft called at:', new Date().toISOString());

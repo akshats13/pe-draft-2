@@ -72,7 +72,7 @@ const DataTable = () => {
         setHierarchicalColumns(fetchedColumns);
 
         if (draftRes.ok) {
-          const draftData = await draftRes.json();
+          const { data: draftData } = await draftRes.json();
           if (draftData && draftData.length > 0) {
             setData(draftData);
             toast.success('Previous draft loaded.');

@@ -73,8 +73,8 @@ const DataTable = () => {
 
         if (draftRes.ok) {
           const draftData = await draftRes.json();
-          if (draftData && draftData.data && draftData.data.length > 0) {
-            setData(draftData.data);
+          if (draftData && draftData.length > 0) {
+            setData(draftData);
             toast.success('Previous draft loaded.');
             return;
           }

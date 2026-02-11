@@ -15,6 +15,7 @@ const DataTable = () => {
   const dataRef = useRef(data);
   const [visibleFields, setVisibleFields] = useState([]);
   const [visibleColumns, setVisibleColumns] = useState([]);
+  const initialLoadEffect = useRef(true);
 
   useEffect(() => {
     dataRef.current = data;
@@ -61,32 +62,46 @@ const DataTable = () => {
   useEffect(() => {
     const loadInitialData = async () => {
       try {
-        const response = await fetch('/api/census-data');
+        const [draftRes, structureRes] = await Promise.all([
+          fetch('/api/get_draft'),
+          fetch('/api/census-data')
+        ]);
 
-        if (response.ok) {
-          const fetchedColumns = await response.json();
-          setHierarchicalColumns(fetchedColumns);
+        if (!structureRes.ok) throw new Error('Failed to load form structure');
+        const fetchedColumns = await structureRes.json();
+        setHierarchicalColumns(fetchedColumns);
 
-          const fields = fetchedColumns.flatMap(col => col.fields);
-          const initialData = Array(10).fill({}).map(() => {
-            const rowData = {};
-            fields.forEach(field => {
-              rowData[field.id] = '';
-            });
-            return rowData;
-          });
-          setData(initialData);
-          toast.success('Form structure loaded.');
-        } else {
-          throw new Error('Failed to load form structure');
+        if (draftRes.ok) {
+          const draftData = await draftRes.json();
+          if (draftData && draftData.data && draftData.data.length > 0) {
+            setData(draftData.data);
+            toast.success('Previous draft loaded.');
+            return;
+          }
         }
+
+        // If no draft or draft is empty, create a new table
+        const fields = fetchedColumns.flatMap(col => col.fields);
+        const initialData = Array(10).fill({}).map(() => {
+          const rowData = {};
+          fields.forEach(field => {
+            rowData[field.id] = '';
+          });
+          return rowData;
+        });
+        setData(initialData);
+        toast.success('Form structure loaded.');
+
       } catch (error) {
         console.error('Error loading initial data:', error);
-        toast.error('Could not load form structure. Please refresh.');
+        toast.error('Could not load form data. Please refresh.');
       }
     };
-
-    loadInitialData();
+    
+    if (initialLoadEffect.current) {
+        loadInitialData();
+        initialLoadEffect.current = false;
+    }
 
     return () => {
       if (autosaveIntervalRef.current) {

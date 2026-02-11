@@ -69,11 +69,11 @@ app.get('/api/get_draft', async (req, res) => {
       const ageInMinutes = (new Date().getTime() - new Date(stats.mtime).getTime()) / 1000 / 60;
       if (ageInMinutes < 20) {
         const data = await fsPromises.readFile(draftFilePath, 'utf-8');
-        res.status(200).send(JSON.parse(data));
+        res.status(200).send({ data: JSON.parse(data) });
         return;
       }
     }
-    res.status(200).send([]);
+    res.status(200).send({ data: [] });
   } catch (err) {
     console.error('Error getting draft:', err);
     res.status(500).send({ message: 'Error getting draft' });

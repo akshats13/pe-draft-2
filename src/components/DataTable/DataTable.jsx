@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import './DataTable.css';
-import { FiMaximize, FiMinimize, FiTrash2 } from 'react-icons/fi';
+import '../Tooltip/Tooltip.css';
+import { FiMaximize, FiMinimize, FiTrash2, FiInfo } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
 
 const DataTable = () => {
@@ -163,32 +164,37 @@ const DataTable = () => {
 
   const renderFieldType = (field, rowIndex, rowData) => {
     const value = rowData[field.id] || '';
+    
+    const commonProps = {
+        value: value,
+        onChange: (e) => handleFieldChange(rowIndex, field.id, e.target.value)
+    };
+
+    let inputElement;
+
     switch (field.type) {
         case 'text':
-          return (
+          inputElement = (
             <input
               type="text"
-              value={value}
-              onChange={(e) => handleFieldChange(rowIndex, field.id, e.target.value)}
+              {...commonProps}
               placeholder={field.placeholder}
             />
           );
+          break;
         case 'number':
-          return (
+          inputElement = (
             <input
               type="number"
-              value={value}
+              {...commonProps}
               min={field.min}
               max={field.max}
-              onChange={(e) => handleFieldChange(rowIndex, field.id, e.target.value)}
             />
           );
+          break;
         case 'select':
-          return (
-            <select
-              value={value}
-              onChange={(e) => handleFieldChange(rowIndex, field.id, e.target.value)}
-            >
+          inputElement = (
+            <select {...commonProps}>
               <option value="">Select...</option>
               {field.options.map(opt => (
                 <option key={opt.value} value={opt.value}>
@@ -197,17 +203,31 @@ const DataTable = () => {
               ))}
             </select>
           );
+          break;
         case 'date':
-          return (
+          inputElement = (
             <input
               type="date"
-              value={value}
-              onChange={(e) => handleFieldChange(rowIndex, field.id, e.target.value)}
+              {...commonProps}
             />
           );
+          break;
         default:
-          return <input type="text" value={value} onChange={(e) => handleFieldChange(rowIndex, field.id, e.target.value)} />;
+          inputElement = <input type="text" {...commonProps} />;
+          break;
       }
+
+    return (
+        <div className="input-wrapper">
+            {inputElement}
+            {field.description && (
+                <div className="tooltip">
+                    <FiInfo color="#666" />
+                    <span className="tooltiptext">{field.description}</span>
+                </div>
+            )}
+        </div>
+    );
   };
 
   const resetData = () => {
